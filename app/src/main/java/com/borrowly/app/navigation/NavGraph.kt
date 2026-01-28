@@ -28,9 +28,13 @@ fun BorrowlyNavGraph(
             )
         }
 
-        composable("${Routes.ITEM_DETAILS}/{itemId}") {
-            ItemDetailsScreen()
+        composable("${Routes.ITEM_DETAILS}/{itemId}") { backStackEntry ->
+            ItemDetailsScreen(
+                itemId = backStackEntry.arguments?.getString("itemId") ?: "",
+                onBack = { navController.popBackStack() }
+            )
         }
+
 
         composable(Routes.USERS) {
             UserListScreen()

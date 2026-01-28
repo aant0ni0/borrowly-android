@@ -29,4 +29,41 @@ class ItemViewModel : ViewModel() {
             }
         }
     }
+
+    fun addItem(name: String, description: String) {
+        viewModelScope.launch {
+            try {
+                repository.addItem(
+                    name = name,
+                    description = description,
+                    ownerId = "u1"
+                )
+                loadItems()
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    error = e.message ?: "Failed to add item"
+                )
+            }
+        }
+    }
+
+    fun reserveItem(id: String) {
+        viewModelScope.launch {
+            try{
+                repository.reserveItem(id)
+                loadItems()
+            }catch (e: Exception){
+
+            }
+        }
+    }
+
+    fun returnItem(id: String) {
+        viewModelScope.launch {
+            repository.returnItem(id)
+            loadItems()
+        }
+    }
+
+
 }

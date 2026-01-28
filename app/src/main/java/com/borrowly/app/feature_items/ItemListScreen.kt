@@ -1,11 +1,13 @@
 package com.borrowly.app.feature_items
 
 import ItemViewModel
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
@@ -16,40 +18,91 @@ fun ItemListScreen(
 ) {
     val viewModel = remember { ItemViewModel() }
     val state by viewModel.uiState.collectAsState()
+    var showDialog by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
-    ) {
-        Text(
-            text = "Items",
-            style = MaterialTheme.typography.headlineMedium
-        )
+    Box(modifier = Modifier.fillMaxSize()) {
 
-        Spacer(Modifier.height(16.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "Items",
+                style = MaterialTheme.typography.headlineMedium
+            )
 
-        if (state.isLoading) {
-            CircularProgressIndicator()
-        }
+            Spacer(Modifier.height(16.dp))
 
-        state.error?.let {
-            Text(text = it, color = MaterialTheme.colorScheme.error)
-        }
+            if (state.isLoading) {
+                CircularProgressIndicator()
+            }
 
-        LazyColumn {
-            items(state.items) { item ->
+            state.error?.let {
                 Text(
-                    text = "${item.name} (${item.state})",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
+                    text = it,
+                    color = MaterialTheme.colorScheme.error
                 )
+            }
+
+            LazyColumn(
+                modifier = Modifier.weight(1f)
+            ) {
+                items(state.items) { item ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                            .clickable {
+                                onItemClick(item.id)
+                            }
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(12.dp)
+                        ) {
+                            Text(
+                                text = item.name,
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                text = item.description,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            Text(
+                                text = "Status: ${item.state}",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            Button(
+                onClick = onUsersClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Go to users")
             }
         }
 
-        Spacer(Modifier.height(16.dp))
+        FloatingActionButton(
+            onClick = { showDialog = true },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        ) {
+            Text("+")
+        }
 
-        Button(onClick = onUsersClick) {
-            Text("Go to users")
+        if (showDialog) {
+            AddItemDialog(
+                onDismiss = { showDialog = false },
+                onAdd = { name, description ->
+                    viewModel.addItem(name, description)
+                }
+            )
         }
     }
 }
