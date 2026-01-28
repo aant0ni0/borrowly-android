@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.borrowly.app.feature_items.ItemlistScreen
+import com.borrowly.app.feature_items.ItemListScreen
 import com.borrowly.app.feature_items.ItemDetailsScreen
 import com.borrowly.app.feature_users.UserListScreen
 
@@ -18,7 +18,7 @@ fun BorrowlyNavGraph(
     ) {
 
         composable(Routes.ITEMS) {
-            ItemlistScreen(
+            ItemListScreen(
                 onItemClick = { itemId: String ->
                     navController.navigate("${Routes.ITEM_DETAILS}/$itemId")
                 },
